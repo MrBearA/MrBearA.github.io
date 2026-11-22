@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prince Castillo – Junior Unity Developer &amp; QA</title>
+  <meta name="description" content="Portfolio of Prince Lharrie Castillo, Junior Unity Developer and QA based in Metro Manila." />
+  <link rel="icon" href="../Image/game.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Poppins:wght@400;500;600&family=Press+Start+2P&display=swap" />
+  <link rel="stylesheet" href="Main.css" />
+
+  <!-- Import map: lets Main.js write `import ... from 'three'` -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.module.js",
+      "three/": "https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!--
+    HOW TO EDIT
+    Anything with a dashed yellow outline (class="todo") is placeholder text.
+    Replace it with your own content, then delete class="todo" from that element.
+  -->
+
+  <header class="site-header">
+    <a class="logo" href="#top">Prince</a>
+    <nav class="main-nav" aria-label="Main">
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ TITLE SCREEN ============ -->
+    <section id="top" class="title-screen">
+      <div class="grid-floor" aria-hidden="true"></div>
+
+      <p class="pixel title-kicker">Junior Unity Developer · QA</p>
+      <h1 class="pixel title-name">PRINCE</h1>
+
+      <div class="title-body">
+        <div class="hero-model">
+          <canvas class="model-viewer" data-model="../models/boy.fbx" aria-hidden="true"></canvas>
+          <div class="hero-platform" aria-hidden="true"></div>
+        </div>
+
+        <nav class="title-menu pixel" aria-label="Title menu">
+          <a href="#projects" class="selected">START <span>Projects</span></a>
+          <a href="#experience">PATCH NOTES <span>Experience</span></a>
+          <a href="#skills">ABILITIES <span>Skills</span></a>
+          <a href="#contact">CREDITS <span>Contact</span></a>
+        </nav>
+      </div>
+
+      <p class="pixel press-enter">PRESS ENTER</p>
+      <p class="pixel corner corner-left">© 2026 PRINCE LHARRIE CASTILLO</p>
+      <p class="pixel corner corner-right">v2026.1 · ↑ ↓ to move</p>
+    </section>
+
+    <!-- ============ PROJECTS: SAVE FILES ============ -->
+    <section id="projects" class="section">
+      <h2 class="section-title">Select a save file</h2>
+      <p class="section-intro">Each file is a project. Load one to see what I built and what I fixed.</p>
+
+      <div class="saves">
+        <!-- To use a screenshot: replace the <svg> inside .save-thumb with
+             <img src="../Image/your-file.png" alt="" /> -->
+
+        <!-- File 1: SLOP MACHINE -->
+        <article class="save selected">
+          <div class="save-thumb">
+            <img src="../Image/games/slop-machine.jpg" alt="SLOP MACHINE slot machine screen" loading="lazy" />
+          </div>
+          <div class="save-info">
+            <p class="save-meta">File 1 · Bad Game Jam 2026 · Kulam Studio (team of 6)</p>
+            <h3>SLOP MACHINE</h3>
+            <p>A chaotic little game about robbing strangers and feeding the coins into a slot machine.
+              I was a programmer and the audio programmer, and handled QA.</p>
+            <ul class="tags"><li>Unity</li><li>C#</li><li>Audio programming</li><li>QA</li><li>Game jam</li></ul>
+            <div class="actions">
+              <a class="btn" href="https://tokwalover666.itch.io/slop-machine">Play in browser</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- File 2: Kuisina -->
+        <article class="save">
+          <div class="save-thumb">
+            <img src="../Image/games/kuisina.jpg" alt="Kuisina title screen" loading="lazy" />
+          </div>
+          <div class="save-info">
+            <p class="save-meta">File 2 · Nov 2026 · Team of 4</p>
+            <h3>Kuisina</h3>
+            <p>A fast-paced cooking game set in a Filipino karinderya. Cook and serve Filipino dishes solo
+              or in 2-player couch co-op. I was a programmer and handled QA.</p>
+            <ul class="tags"><li>Unity</li><li>C#</li><li>QA</li><li>Couch co-op</li><li>Cooking game</li></ul>
+            <div class="actions">
+              <a class="btn" href="https://kygbrl.itch.io/kuisina">Download on itch.io</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- File 3: Pathways (TechFactor) -->
+        <article class="save">
+          <div class="save-thumb">
+            <img src="../Image/games/pathways.jpg" alt="Pathways title screen" loading="lazy" />
+          </div>
+          <div class="save-info">
+            <p class="save-meta">File 3 · TechFactor · 2026</p>
+            <h3>Pathways</h3>
+            <p>An interactive medical simulation. As Unity Developer, I tested the simulation's mechanics, fixed bugs in user pathways and UI feedback,
+              and kept it stable across different hardware. I debugged C# with the team and documented decision-tree workflows.</p>
+            <ul class="tags"><li>Unity</li><li>C#</li><li>QA</li><li>Cross-device testing</li></ul>
+          </div>
+        </article>
+
+        <!-- File 4: empty slot that leads to contact -->
+        <a class="save empty" href="#contact">
+          <div class="save-thumb" aria-hidden="true">+</div>
+          <div class="save-info">
+            <p class="save-meta">File 4 · Empty</p>
+            <h3>New game: your studio?</h3>
+            <p>Open to junior Unity developer and QA roles. Start a new file by getting in touch.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============ EXPERIENCE: PATCH NOTES ============ -->
+    <section id="experience" class="section">
+      <div class="patch-layout">
+        <div class="patch-intro">
+          <span class="version-badge">v2026.1 · Live</span>
+          <h2 class="section-title">Prince<br />Castillo</h2>
+          <p class="patch-role">Junior Unity Developer · QA &amp; Technical Support</p>
+          <p>Entertainment and Multimedia Computing graduate based in Metro Manila. I build and test interactive
+            Unity applications, and I'm good at explaining technical problems in plain language, to developers and players alike.</p>
+          <div class="actions">
+            <a class="btn" href="../Castillo_Prince_Resume.pdf">Download résumé</a>
+            <a class="btn ghost" href="#contact">Contact me</a>
+          </div>
+        </div>
+
+        <article class="patch-card">
+          <div class="patch-head">
+            <h3>Patch notes</h3>
+            <span>Nov 2026</span>
+          </div>
+          <ul class="patch-list">
+            <li><span class="badge new">NEW</span><span><strong>Shipped SLOP MACHINE</strong> with Kulam Studio for Bad Game Jam 2026. <a href="https://tokwalover666.itch.io/slop-machine">Play it →</a></span></li>
+            <li><span class="badge new">NEW</span><span><strong>Presented Kuisina</strong>, a Filipino co-op cooking game, as a team of 4. <a href="https://kygbrl.itch.io/kuisina">Get it →</a></span></li>
+            <li><span class="badge new">NEW</span><span><strong>Unity Developer at TechFactor.</strong> Tested and debugged Pathways, an interactive medical simulation.</span></li>
+            <li><span class="badge new">NEW</span><span><strong>Graduated:</strong> BS Entertainment &amp; Multimedia Computing, CIIT Philippines (2022–2026).</span></li>
+            <li><span class="badge fixed">FIXED</span><span>Bugs in user pathways and UI feedback in the simulation.</span></li>
+            <li><span class="badge fixed">FIXED</span><span>Performance problems across different hardware.</span></li>
+            <li><span class="badge award">AWARD</span><span><strong>3rd Place</strong>, Pasig ICT Competition: PC hardware, printer and network troubleshooting under time pressure.</span></li>
+            <li><span class="badge known">KNOWN</span><span>Still looking for a first full-time studio role. <a href="#contact">Report it →</a></span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ SKILLS: ABILITIES ============ -->
+    <section id="skills" class="section">
+      <h2 class="section-title">Abilities</h2>
+      <p class="section-intro">What I bring to a team, from building in Unity to tracking down the bug.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Development</h3>
+          <ul class="tags"><li>Unity</li><li>C#</li><li>OOP</li><li>Visual Studio</li><li>Git &amp; GitHub</li><li>Firebase Auth &amp; Realtime DB</li><li>HTML / CSS</li><li>Three.js</li></ul>
+        </div>
+        <div class="card">
+          <h3>QA &amp; testing</h3>
+          <ul class="tags"><li>Bug reproduction &amp; reports</li><li>UI / UX testing</li><li>Regression checks</li><li>Cross-device troubleshooting</li><li>Issue documentation</li></ul>
+        </div>
+        <div class="card">
+          <h3>Networking</h3>
+          <ul class="tags"><li>TCP/IP basics</li><li>WebSockets</li><li>Network state syncing</li><li>Connectivity diagnostics</li></ul>
+        </div>
+        <div class="card">
+          <h3>Technical support</h3>
+          <ul class="tags"><li>PC assembly &amp; diagnostics</li><li>Windows administration</li><li>RJ45 cabling</li><li>Router, printer &amp; peripheral setup</li></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ CONTACT: CREDITS ============ -->
+  <footer id="contact" class="site-footer">
+    <div class="contact-head">
+      <h2 class="pixel">CREDITS</h2>
+      <p>Open to junior Unity developer and QA roles. Email is the fastest way to reach me.</p>
+    </div>
+    <ul class="contact-links">
+      <li><span>Email</span> <a href="mailto:princelharriebcastillo23@gmail.com">princelharriebcastillo23@gmail.com</a></li>
+      <li><span>GitHub</span> <a href="https://github.com/MrBearA">github.com/MrBearA</a></li>
+      <li><span>LinkedIn</span> <a href="https://www.linkedin.com/in/princelharriecastillo/">linkedin.com/in/princelharriecastillo</a></li>
+      <li><span>Based in</span> Metro Manila, Philippines</li>
+    </ul>
+    <p class="copyright">© 2026 Prince Lharrie Castillo · Thanks for playing</p>
+  </footer>
+
+  <script type="module" src="Main.js"></script>
+</body>
+</html>
