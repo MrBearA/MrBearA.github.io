@@ -5,7 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Prince Castillo – Junior Unity Developer &amp; QA</title>
   <meta name="description" content="Portfolio of Prince Lharrie Castillo, Junior Unity Developer and QA based in Metro Manila." />
-  <link rel="icon" href="../Image/game.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../Image/bear-32.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="../Image/bear-64.png" />
+  <link rel="apple-touch-icon" href="../Image/bear-180.png" />
+  <meta name="theme-color" content="#1c1e2c" />
+
+  <!-- Link preview card (LinkedIn, Discord, Messenger, X). og:image and og:url must be full links. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Prince Castillo – Junior Unity Developer &amp; QA" />
+  <meta property="og:description" content="Game portfolio: SLOP MACHINE, Kuisina and Pathways. Programming, QA and Unity, presented like a retro game." />
+  <meta property="og:url" content="https://mrbeara.github.io/" />
+  <meta property="og:image" content="https://mrbeara.github.io/Image/og-banner.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Prince Castillo, Player 1 portfolio banner with a pixel bear" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://mrbeara.github.io/Image/og-banner.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Poppins:wght@400;500;600&family=Press+Start+2P&display=swap" />
   <link rel="stylesheet" href="Main.css" />
@@ -14,13 +29,132 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.module.js",
-      "three/": "https://cdn.jsdelivr.net/npm/three@0.153.0/examples/jsm/"
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
     }
   }
   </script>
 </head>
-<body>
+<body class="booting">
+  <!-- ============ LOADING SCREEN ============
+       Shows real progress: the 3D model download, the fonts and the page's images.
+       It removes itself when everything is in (or after a few seconds at most). -->
+  <div id="boot" class="boot" role="status" aria-live="polite" aria-label="Loading the portfolio">
+    <div class="boot-floor" aria-hidden="true"></div>
+    <p class="boot-top pixel" aria-hidden="true"><span>PRINCE.EXE</span><span>SAVE DATA: OK</span></p>
+
+    <div class="boot-center">
+      <div class="boot-cube" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <p class="boot-title pixel"><span id="boot-word">NOW LOADING</span><span class="boot-dots" aria-hidden="true"></span></p>
+      <div class="boot-bar" aria-hidden="true"><div class="boot-fill" id="boot-fill"></div></div>
+      <p class="boot-meta pixel" aria-hidden="true"><span id="boot-step">BOOTING</span><span id="boot-pct">000%</span></p>
+    </div>
+
+    <p class="boot-tip" id="boot-tip"><b class="pixel">TIP</b> <span>Use ↑ ↓ and Enter on the title menu, like a real game.</span></p>
+    <button class="boot-skip pixel" id="boot-skip" type="button">Skip ▶</button>
+  </div>
+  <script>
+  (function () {
+    var root = document.documentElement, body = document.body;
+    var boot = document.getElementById('boot');
+    var fill = document.getElementById('boot-fill'), pct = document.getElementById('boot-pct');
+    var step = document.getElementById('boot-step'), word = document.getElementById('boot-word');
+    var tipEl = document.querySelector('#boot-tip span');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var t0 = performance.now(), MIN = reduce ? 0 : 900, MAX = 12000;
+    // How much each part counts toward 100%.
+    var part = { model: 0, fonts: 0, page: 0 };
+    var weight = { model: 0.7, fonts: 0.1, page: 0.2 };
+    var shown = 0, done = false, modelShown = false;
+
+    var tips = [
+      'Use ↑ ↓ and Enter on the title menu, like a real game.',
+      'Every save file is a game I helped build.',
+      'Patch notes = my experience. Abilities = my skills.',
+      'SLOP MACHINE and Kuisina are playable on itch.io.',
+      'I break games on purpose. It’s called QA.'
+    ];
+    var tipI = 0;
+    var tipTimer = setInterval(function () { tipI = (tipI + 1) % tips.length; tipEl.textContent = tips[tipI]; }, 2400);
+
+    // 1. The 3D model: download it here with a real progress count, and hand the bytes to Main.js.
+    // Optional: a model file to download with progress (data-model on #boot). The title screen
+    // is now built in code, so there is none; the bar waits for Main.js to say the scene is ready.
+    var url = boot.getAttribute('data-model');
+    window.__bootModel = url ? fetch(url).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var total = +res.headers.get('Content-Length') || 0;
+      if (!res.body || !total) { part.model = 0.6; return res.arrayBuffer(); }
+      var reader = res.body.getReader(), got = 0, chunks = [];
+      return (function pump() {
+        return reader.read().then(function (r) {
+          if (r.done) {
+            var out = new Uint8Array(got), o = 0;
+            chunks.forEach(function (c) { out.set(c, o); o += c.length; });
+            return out.buffer;
+          }
+          chunks.push(r.value); got += r.value.length;
+          part.model = Math.min(0.95, got / total);
+          return pump();
+        });
+      })();
+    }).then(function (buf) { part.model = 0.95; return { url: url, buffer: buf }; },
+            function (err) { part.model = 1; throw err; }) : null;
+    if (!url) part.model = 0.4;
+    else window.__bootModel.catch(function () {}); // Main.js handles a failed download itself
+    // Main.js says when the model is actually on screen (or failed and showed a stand-in).
+    window.addEventListener('boot:model-ready', function () { part.model = 1; modelShown = true; });
+
+    // 2. Fonts, 3. everything else on the page.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { part.fonts = 1; });
+    else part.fonts = 1;
+    window.addEventListener('load', function () { part.page = 1; });
+    document.addEventListener('DOMContentLoaded', function () { part.page = Math.max(part.page, 0.5); });
+
+    function label(p) {
+      if (p < 0.15) return 'BOOTING';
+      if (p < 0.85) return 'LOADING PLAYER';
+      if (p < 1) return 'BUILDING WORLD';
+      return 'READY';
+    }
+
+    function finish() {
+      if (done) return; done = true;
+      clearInterval(tipTimer);
+      fill.style.width = '100%'; pct.textContent = '100%'; step.textContent = 'READY';
+      word.textContent = 'READY!'; boot.classList.add('is-ready');
+      setTimeout(function () {
+        boot.classList.add('is-leaving');
+        body.classList.remove('booting');
+        setTimeout(function () { boot.remove(); }, reduce ? 250 : 900);
+      }, reduce ? 0 : 350);
+    }
+
+    function frame(now) {
+      if (done) return;
+      var target = part.model * weight.model + part.fonts * weight.fonts + part.page * weight.page;
+      // The model is downloaded but the 3D code never reported back (for example the 3D library was blocked): don't wait forever.
+      if ((part.model >= 0.95 || !url) && !modelShown && now - t0 > 6000) { part.model = 1; modelShown = true; }
+      // Ease the bar toward the real number so it never jumps backwards or stalls ugly.
+      shown += (target - shown) * (reduce ? 1 : 0.16);
+      if (target - shown < 0.002) shown = target;
+      var p = Math.min(1, shown);
+      fill.style.width = (p * 100).toFixed(1) + '%';
+      pct.textContent = String(Math.floor(p * 100)).padStart(3, '0') + '%';
+      step.textContent = label(p);
+      if ((p >= 0.999 && now - t0 >= MIN) || now - t0 > MAX) return finish();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    document.getElementById('boot-skip').addEventListener('click', finish);
+    document.addEventListener('keydown', function (e) { if (!done && e.key === 'Escape') finish(); });
+    // Coming back in the same visit? Don't make people wait again for long.
+    try { if (sessionStorage.getItem('booted')) MIN = 0; sessionStorage.setItem('booted', '1'); } catch (e) {}
+  })();
+  </script>
+
   <!--
     HOW TO EDIT
     Anything with a dashed yellow outline (class="todo") is placeholder text.
@@ -44,10 +178,16 @@
 
       <p class="pixel title-kicker">Junior Unity Developer · QA</p>
       <h1 class="pixel title-name">PRINCE</h1>
+      <p class="title-sub">Prince Lharrie Castillo · I build and test games in Unity.</p>
 
       <div class="title-body">
         <div class="hero-model">
-          <canvas class="model-viewer" data-model="../models/boy.fbx" aria-hidden="true"></canvas>
+          <!-- Speech bubble: cycles through my games (edit the list in Main.js, NOW_PLAYING) -->
+          <a class="now-playing" id="now-playing" href="#file-slop">
+            <img src="../Image/games/slop-machine-card.jpg" alt="" />
+            <span class="np-text"><span class="np-label pixel">Now playing</span><span class="np-name">SLOP MACHINE</span></span>
+          </a>
+          <canvas class="model-viewer" aria-hidden="true"></canvas>
           <div class="hero-platform" aria-hidden="true"></div>
         </div>
 
@@ -74,16 +214,23 @@
              <img src="../Image/your-file.png" alt="" /> -->
 
         <!-- File 1: SLOP MACHINE -->
-        <article class="save selected">
+        <article class="save selected" id="file-slop">
           <div class="save-thumb">
-            <img src="../Image/games/slop-machine.jpg" alt="SLOP MACHINE slot machine screen" loading="lazy" />
+            <img src="../Image/games/slop-machine-card.jpg" alt="SLOP MACHINE: the slot machine with the tagline Steal, Spin, Slop" loading="lazy" />
           </div>
           <div class="save-info">
             <p class="save-meta">File 1 · Bad Game Jam 2026 · Kulam Studio (team of 6)</p>
             <h3>SLOP MACHINE</h3>
-            <p>A chaotic little game about robbing strangers and feeding the coins into a slot machine.
-              I was a programmer and the audio programmer, and handled QA.</p>
-            <ul class="tags"><li>Unity</li><li>C#</li><li>Audio programming</li><li>QA</li><li>Game jam</li></ul>
+            <div class="save-role">
+              <span class="role-label pixel">My role</span>
+              <ul class="role-list pixel"><li>Programmer</li><li>Audio programmer</li><li>QA</li></ul>
+            </div>
+            <p>A chaotic little game about robbing strangers and feeding the coins into a slot machine.</p>
+            <div class="built">
+              <p class="built-label pixel">What I built</p>
+              <ul><li>The slot machine system</li><li>NPC behaviour for the strangers you rob</li><li>Player movement</li></ul>
+            </div>
+            <ul class="tags"><li>Unity</li><li>C#</li><li>Game jam</li></ul>
             <div class="actions">
               <a class="btn" href="https://tokwalover666.itch.io/slop-machine">Play in browser</a>
             </div>
@@ -91,33 +238,52 @@
         </article>
 
         <!-- File 2: Kuisina -->
-        <article class="save">
+        <article class="save" id="file-kuisina">
           <div class="save-thumb">
-            <img src="../Image/games/kuisina.jpg" alt="Kuisina title screen" loading="lazy" />
+            <img src="../Image/games/kuisina-card.jpg" alt="Kuisina logo on a pot surrounded by Filipino dishes" loading="lazy" />
           </div>
           <div class="save-info">
             <p class="save-meta">File 2 · Nov 2026 · Team of 4</p>
             <h3>Kuisina</h3>
+            <div class="save-role">
+              <span class="role-label pixel">My role</span>
+              <ul class="role-list pixel"><li>Unity developer</li><li>Programmer</li><li>QA</li></ul>
+            </div>
             <p>A fast-paced cooking game set in a Filipino karinderya. Cook and serve Filipino dishes solo
-              or in 2-player couch co-op. I was a programmer and handled QA.</p>
-            <ul class="tags"><li>Unity</li><li>C#</li><li>QA</li><li>Couch co-op</li><li>Cooking game</li></ul>
+              or in 2-player couch co-op.</p>
+            <div class="built">
+              <p class="built-label pixel">What I built</p>
+              <ul><li>NPC customers and the paths they walk through the karinderya</li><li>The ordering system</li><li>The dialogue system</li></ul>
+            </div>
+            <ul class="tags"><li>Unity</li><li>C#</li><li>Couch co-op</li><li>Cooking game</li></ul>
             <div class="actions">
               <a class="btn" href="https://kygbrl.itch.io/kuisina">Download on itch.io</a>
             </div>
           </div>
         </article>
 
-        <!-- File 3: Pathways (TechFactor) -->
-        <article class="save">
+        <!-- File 3: Pathways (Group 1 school project) -->
+        <article class="save" id="file-pathways">
           <div class="save-thumb">
-            <img src="../Image/games/pathways.jpg" alt="Pathways title screen" loading="lazy" />
+            <img src="../Image/games/pathways-card.jpg" alt="Pathways logo with the label A biochemistry adventure" loading="lazy" />
           </div>
           <div class="save-info">
-            <p class="save-meta">File 3 · TechFactor · 2026</p>
+            <p class="save-meta">File 3 · Group 1 · Team of 5</p>
             <h3>Pathways</h3>
-            <p>An interactive medical simulation. As Unity Developer, I tested the simulation's mechanics, fixed bugs in user pathways and UI feedback,
-              and kept it stable across different hardware. I debugged C# with the team and documented decision-tree workflows.</p>
-            <ul class="tags"><li>Unity</li><li>C#</li><li>QA</li><li>Cross-device testing</li></ul>
+            <div class="save-role">
+              <span class="role-label pixel">My role</span>
+              <ul class="role-list pixel"><li>Team leader</li><li>Unity developer</li><li>Programmer</li><li>QA</li></ul>
+            </div>
+            <p>A cute educational adventure about biochemistry. A tired medical student falls asleep studying and wakes up
+              inside the textbook. Clear minigames across four metabolic-pathway levels to wake up in time for the exam.</p>
+            <div class="built">
+              <p class="built-label pixel">What I built</p>
+              <ul><li>The map system for travelling between minigames</li><li>My own train minigame</li><li>The save system</li><li>The main menu and sound volume settings</li></ul>
+            </div>
+            <ul class="tags"><li>Unity</li><li>C#</li><li>Educational</li><li>Minigames</li></ul>
+            <div class="actions">
+              <a class="btn" href="https://mrbearb.itch.io/pathways">Download on itch.io</a>
+            </div>
           </div>
         </article>
 
@@ -131,6 +297,20 @@
           </div>
         </a>
       </div>
+
+      <!-- Bonus: link to the itch.io profile, shown with a picture of the page -->
+      <a class="itch-card" href="https://mrbearb.itch.io">
+        <div class="itch-shot">
+          <span class="itch-bar" aria-hidden="true"><i></i><i></i><i></i><b>mrbearb.itch.io</b></span>
+          <img src="../Image/itch-profile.jpg" alt="My itch.io profile page, showing Pathways, Factory Romance and SLOP MACHINE" loading="lazy" />
+        </div>
+        <div class="itch-info">
+          <p class="save-meta">Bonus level · itch.io</p>
+          <h3>Play my games on itch.io</h3>
+          <p>Every game I've worked on, in one place. Play in your browser or download them.</p>
+          <span class="btn">Visit mrbearb.itch.io ▶</span>
+        </div>
+      </a>
     </section>
 
     <!-- ============ EXPERIENCE: PATCH NOTES ============ -->
@@ -156,10 +336,10 @@
           <ul class="patch-list">
             <li><span class="badge new">NEW</span><span><strong>Shipped SLOP MACHINE</strong> with Kulam Studio for Bad Game Jam 2026. <a href="https://tokwalover666.itch.io/slop-machine">Play it →</a></span></li>
             <li><span class="badge new">NEW</span><span><strong>Presented Kuisina</strong>, a Filipino co-op cooking game, as a team of 4. <a href="https://kygbrl.itch.io/kuisina">Get it →</a></span></li>
-            <li><span class="badge new">NEW</span><span><strong>Unity Developer at TechFactor.</strong> Tested and debugged Pathways, an interactive medical simulation.</span></li>
+            <li><span class="badge new">NEW</span><span><strong>QA &amp; Programmer at TechFactor.</strong> Helped re-publish the studio's educational games.</span></li>
+            <li><span class="badge new">NEW</span><span><strong>Led Pathways</strong>, a biochemistry learning game, as team leader of Group 1. <a href="https://mrbearb.itch.io/pathways">Play it →</a></span></li>
             <li><span class="badge new">NEW</span><span><strong>Graduated:</strong> BS Entertainment &amp; Multimedia Computing, CIIT Philippines (2022–2026).</span></li>
-            <li><span class="badge fixed">FIXED</span><span>Bugs in user pathways and UI feedback in the simulation.</span></li>
-            <li><span class="badge fixed">FIXED</span><span>Performance problems across different hardware.</span></li>
+            <li><span class="badge fixed">FIXED</span><span>Bugs found in QA before TechFactor's educational games were re-published.</span></li>
             <li><span class="badge award">AWARD</span><span><strong>3rd Place</strong>, Pasig ICT Competition: PC hardware, printer and network troubleshooting under time pressure.</span></li>
             <li><span class="badge known">KNOWN</span><span>Still looking for a first full-time studio role. <a href="#contact">Report it →</a></span></li>
           </ul>
@@ -172,23 +352,42 @@
       <h2 class="section-title">Abilities</h2>
       <p class="section-intro">What I bring to a team, from building in Unity to tracking down the bug.</p>
 
-      <div class="grid">
-        <div class="card">
-          <h3>Development</h3>
+      <div class="abilities">
+        <article class="ability">
+          <div class="ability-head">
+            <span class="ability-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></span>
+            <div><p class="ability-class pixel">Main class</p><h3>Development</h3></div>
+          </div>
           <ul class="tags"><li>Unity</li><li>C#</li><li>OOP</li><li>Visual Studio</li><li>Git &amp; GitHub</li><li>Firebase Auth &amp; Realtime DB</li><li>HTML / CSS</li><li>Three.js</li></ul>
-        </div>
-        <div class="card">
-          <h3>QA &amp; testing</h3>
+          <p class="ability-proof"><span class="pixel">Used in</span> SLOP MACHINE, Kuisina, Pathways and this website (Three.js)</p>
+        </article>
+        <article class="ability">
+          <div class="ability-head">
+            <span class="ability-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="13" rx="5" ry="6.5"/><path d="M12 6.5V20M7 10H3M7 15H3M17 10h4M17 15h4M9 4l1.5 2.5M15 4l-1.5 2.5"/></svg></span>
+            <div><p class="ability-class pixel">Main class</p><h3>QA &amp; testing</h3></div>
+          </div>
           <ul class="tags"><li>Bug reproduction &amp; reports</li><li>UI / UX testing</li><li>Regression checks</li><li>Cross-device troubleshooting</li><li>Issue documentation</li></ul>
-        </div>
-        <div class="card">
-          <h3>Networking</h3>
+          <p class="ability-proof"><span class="pixel">Used in</span> QA on SLOP MACHINE, Kuisina, Pathways and TechFactor's educational games</p>
+        </article>
+        <article class="ability">
+          <div class="ability-head">
+            <span class="ability-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 21V3M5 4h12l-2.5 4L17 12H5"/></svg></span>
+            <div><p class="ability-class pixel">Support skill</p><h3>Teamwork &amp; game jams</h3></div>
+          </div>
+          <ul class="tags"><li>Team leading</li><li>Audio programming</li><li>Game jams</li><li>Working in teams of 4–6</li></ul>
+          <p class="ability-proof"><span class="pixel">Used in</span> Team leader on Pathways · audio programmer on SLOP MACHINE</p>
+        </article>
+        <article class="ability ability-small">
+          <div class="ability-head">
+            <span class="ability-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14.5 5.5a4 4 0 0 0 5 5L12 18l-3.5 3.5-3-3L9 15l7.5-7.5"/><path d="M14.5 5.5l3-3"/></svg></span>
+            <div><p class="ability-class pixel">Side quest</p><h3>Also good at</h3></div>
+          </div>
+          <p class="ability-group">Networking</p>
           <ul class="tags"><li>TCP/IP basics</li><li>WebSockets</li><li>Network state syncing</li><li>Connectivity diagnostics</li></ul>
-        </div>
-        <div class="card">
-          <h3>Technical support</h3>
+          <p class="ability-group">Technical support</p>
           <ul class="tags"><li>PC assembly &amp; diagnostics</li><li>Windows administration</li><li>RJ45 cabling</li><li>Router, printer &amp; peripheral setup</li></ul>
-        </div>
+          <p class="ability-proof"><span class="pixel">Award</span> 3rd Place, Pasig ICT Competition</p>
+        </article>
       </div>
     </section>
   </main>
@@ -202,6 +401,7 @@
     <ul class="contact-links">
       <li><span>Email</span> <a href="mailto:princelharriebcastillo23@gmail.com">princelharriebcastillo23@gmail.com</a></li>
       <li><span>GitHub</span> <a href="https://github.com/MrBearA">github.com/MrBearA</a></li>
+      <li><span>itch.io</span> <a href="https://mrbearb.itch.io">mrbearb.itch.io</a></li>
       <li><span>LinkedIn</span> <a href="https://www.linkedin.com/in/princelharriecastillo/">linkedin.com/in/princelharriecastillo</a></li>
       <li><span>Based in</span> Metro Manila, Philippines</li>
     </ul>
