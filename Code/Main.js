@@ -1,4 +1,6 @@
-import * as THREE from 'three';
+// The 3D library loads on its own (see bottom of the 3D section), so menus, clips and
+// trailers keep working even if it is slow or blocked.
+let THREE = null;
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -115,16 +117,23 @@ function createHero(canvas) {
   };
 }
 
-const heroes = [...document.querySelectorAll('.model-viewer')].map(createHero);
-
-// One shared loop. requestAnimationFrame pauses by itself when the tab is hidden.
-const start = performance.now();
-function tick(now) {
-  const t = (now - start) / 1000;
-  for (const h of heroes) h.render(t);
-  requestAnimationFrame(tick);
-}
-requestAnimationFrame(tick);
+import('three')
+  .then((lib) => {
+    THREE = lib;
+    const heroes = [...document.querySelectorAll('.model-viewer')].map(createHero);
+    // One shared loop. requestAnimationFrame pauses by itself when the tab is hidden.
+    const start = performance.now();
+    const tick = (now) => {
+      const t = (now - start) / 1000;
+      for (const h of heroes) h.render(t);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  })
+  .catch((err) => {
+    console.error('3D library did not load; the title screen shows without the bear.', err);
+    window.dispatchEvent(new Event('boot:model-ready')); // don't keep the loading screen waiting
+  });
 
 /* ---------- "Now playing" bubble: cycles through my games ---------- */
 
@@ -200,7 +209,36 @@ document.querySelectorAll('.hover-clip').forEach((video) => {
   save.addEventListener('mouseleave', stop);
   save.addEventListener('focusin', play);
   save.addEventListener('focusout', stop);
+  // Phones have no hover: tapping the picture starts and stops the clip.
+  video.closest('.save-thumb').addEventListener('click', () => (video.paused ? play() : stop()));
 });
+
+/* ---------- Trailer pop-up: any button with data-trailer opens it ---------- */
+
+const dialog = document.getElementById('trailer-dialog');
+if (dialog && typeof dialog.showModal === 'function') {
+  const player = document.getElementById('trailer-video');
+  const title = document.getElementById('trailer-title');
+  let opener = null;
+  document.querySelectorAll('[data-trailer]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      opener = btn;
+      title.textContent = btn.dataset.title || 'Trailer';
+      player.src = btn.dataset.trailer;
+      dialog.showModal();
+      player.play().catch(() => {}); // starts with sound because the visitor clicked
+    });
+  });
+  const close = () => dialog.close();
+  dialog.querySelector('.trailer-close').addEventListener('click', close);
+  dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); }); // click outside the video
+  dialog.addEventListener('close', () => {
+    player.pause();
+    player.removeAttribute('src');
+    player.load();
+    opener?.focus();
+  });
+}
 
 /* ---------- Highlight the menu link for the section on screen ---------- */
 

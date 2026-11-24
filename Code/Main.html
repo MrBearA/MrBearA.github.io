@@ -23,7 +23,7 @@
   <meta name="twitter:image" content="https://mrbeara.github.io/Image/og-banner.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Poppins:wght@400;500;600&family=Press+Start+2P&display=swap" />
-  <link rel="stylesheet" href="Main.css?v=2026-11-23" />
+  <link rel="stylesheet" href="Main.css?v=2026-11-24" />
 
   <!-- Import map: lets Main.js write `import ... from 'three'` -->
   <script type="importmap">
@@ -241,6 +241,8 @@
         <article class="save" id="file-kuisina">
           <div class="save-thumb">
             <img src="../Image/games/kuisina-card.jpg" alt="Kuisina logo on a pot surrounded by Filipino dishes" loading="lazy" />
+            <video class="hover-clip" src="../Video/kuisina-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+            <span class="clip-badge pixel" aria-hidden="true">▶ Gameplay</span>
           </div>
           <div class="save-info">
             <p class="save-meta">File 2 · Nov 2026 · Team of 4</p>
@@ -258,6 +260,7 @@
             <ul class="tags"><li>Unity</li><li>C#</li><li>Couch co-op</li><li>Cooking game</li></ul>
             <div class="actions">
               <a class="btn" href="https://kygbrl.itch.io/kuisina">Download on itch.io</a>
+              <button class="btn ghost" type="button" data-trailer="../Video/kuisina-trailer.mp4" data-title="Kuisina trailer">▶ Watch trailer</button>
             </div>
           </div>
         </article>
@@ -266,6 +269,8 @@
         <article class="save" id="file-pathways">
           <div class="save-thumb">
             <img src="../Image/games/pathways-card.jpg" alt="Pathways logo with the label A biochemistry adventure" loading="lazy" />
+            <video class="hover-clip" src="../Video/pathways-preview.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+            <span class="clip-badge pixel" aria-hidden="true">▶ Gameplay</span>
           </div>
           <div class="save-info">
             <p class="save-meta">File 3 · Group 1 · Team of 5</p>
@@ -283,6 +288,7 @@
             <ul class="tags"><li>Unity</li><li>C#</li><li>Educational</li><li>Minigames</li></ul>
             <div class="actions">
               <a class="btn" href="https://mrbearb.itch.io/pathways">Download on itch.io</a>
+              <button class="btn ghost" type="button" data-trailer="../Video/pathways-trailer.mp4" data-title="Pathways trailer">▶ Watch trailer</button>
             </div>
           </div>
         </article>
@@ -408,6 +414,14 @@
     <p class="copyright">© 2026 Prince Lharrie Castillo · Thanks for playing</p>
   </footer>
 
-  <script type="module" src="Main.js?v=2026-11-23"></script>
+  <!-- Trailer player: opened by any button with data-trailer -->
+  <dialog class="trailer-dialog" id="trailer-dialog" aria-label="Game trailer">
+    <div class="trailer-frame">
+      <div class="trailer-bar"><span class="pixel" id="trailer-title">Trailer</span><button class="trailer-close" type="button" aria-label="Close trailer">✕</button></div>
+      <video id="trailer-video" controls playsinline preload="none"></video>
+    </div>
+  </dialog>
+
+  <script type="module" src="Main.js?v=2026-11-24"></script>
 </body>
 </html>
